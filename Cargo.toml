@@ -1,0 +1,14 @@
+[package]
+name = "cbor-diag-python-package"
+version = "0.1.0"
+edition = "2021"
+# This is not published through crates.io, but through PyPI.
+publish = false
+
+[lib]
+name = "cbor_diag"
+crate-type = ["cdylib"]
+
+[dependencies]
+cbor-diag-rs = { package = "cbor-diag", version = "0.1.11" }
+pyo3 = "0.18.1"
