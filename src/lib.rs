@@ -25,13 +25,20 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str) -> PyResult<PyObject> {
 /// >>> encoded = bytes.fromhex('a1016568656c6c6f')
 /// >>> cbor2diag(encoded)
 /// '{1: "hello"}'
-#[pyfunction]
-fn cbor2diag(_py: Python<'_>, encoded: &[u8]) -> PyResult<String> {
+///
+/// Key word arguments influence additional details:
+/// * With ``pretty=False``, no space is left after colons, commas etc.
+#[pyfunction(signature = (encoded, *, pretty=true))]
+fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool) -> PyResult<String> {
     let parsed = cbor_diag_rs::parse_bytes(encoded)
         .map_err(|e| match e {
             cbor_diag_rs::Error::Todo(s) => pyo3::exceptions::PyValueError::new_err(s),
         })?;
-    Ok(parsed.to_diag())
+    if pretty {
+        Ok(parsed.to_diag_pretty())
+    } else {
+        Ok(parsed.to_diag())
+    }
 }
 
 /// cbor-diag
