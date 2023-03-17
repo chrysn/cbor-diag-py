@@ -54,7 +54,7 @@ fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool) -> PyResult<String> 
 /// .. _RFC8949: https://www.rfc-editor.org/rfc/rfc8949
 /// .. _cbor2: https://pypi.org/project/cbor2/
 #[pymodule]
-fn cbor_diag(_py: Python, m: &PyModule) -> PyResult<()> {
+fn _cbor_diag(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(diag2cbor, m)?)?;
     m.add_function(wrap_pyfunction!(cbor2diag, m)?)?;
     Ok(())
