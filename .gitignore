@@ -70,3 +70,6 @@ docs/_build/
 
 # Pyenv
 .python-version
+
+# Virtualenv typically set up when following pyo3's user guide
+.env
