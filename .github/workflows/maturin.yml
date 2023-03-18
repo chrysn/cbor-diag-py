@@ -3,6 +3,10 @@
 #
 #    maturin generate-ci --platform all --pytest github
 #
+# and
+#
+# * remove the "Upload to GitHub release" step
+#
 on:
   push:
     branches:
@@ -200,9 +204,3 @@ jobs:
         with:
           name: wasm-wheels
           path: wasm
-      - name: Upload to GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            wasm/*.whl
-          prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') }}
