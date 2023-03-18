@@ -29,6 +29,7 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str) -> PyResult<PyObject> {
 /// '{1: "hello"}'
 ///
 /// Key word arguments influence additional details:
+///
 /// * With ``pretty=False``, no space is left after colons, commas etc.
 #[pyfunction(signature = (encoded, *, pretty=true))]
 fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool) -> PyResult<String> {
