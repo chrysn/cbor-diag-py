@@ -12,6 +12,14 @@ this module only exposes two very simple functions:
 
 It is recommended to use the cbor2_ package to actually process the CBOR data.
 
+Documentation is available `on readthedocs`_.
+
+Installation
+============
+
+This project can be installed `from PyPI`_;
+binary wheels are available there for the common platforms.
+
 Maintenance
 ===========
 
@@ -44,6 +52,8 @@ as the maintainer of the underlying `cbor-diag crate`_.
 
 .. _`cbor-diag crate`: https://crates.io/crates/cbor-diag
 .. _cbor2: https://pypi.org/project/cbor2/
+.. _`on readthedocs`: https://cbor-diag.readthedocs.io/
+.. _`from PyPI`: https://pypi.org/project/cbor-diag/
 .. _maturin: https://www.maturin.rs/
 .. _pyo3: https://pyo3.rs/
 .. _`not yet`: https://github.com/PyO3/maturin/issues/1507
