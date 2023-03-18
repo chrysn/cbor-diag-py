@@ -1,5 +1,7 @@
 # Maturin setup for readthedocs, copied from https://www.maturin.rs/sphinx.html
 #
+# With updates for 
+#
 # https://docs.readthedocs.io/en/stable/config-file/v2.html#supported-settings
 
 version: 2
@@ -11,7 +13,7 @@ build:
   os: "ubuntu-20.04"
   tools:
     python: "3.9"
-    rust: "1.55"
+    rust: "1.63"
 
 python:
   install:
