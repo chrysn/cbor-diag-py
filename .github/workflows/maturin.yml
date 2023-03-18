@@ -8,6 +8,12 @@
 # * remove the "Upload to GitHub release" step
 # * remove the emscripten / pytest step -- this fails for reasons that are too
 #   hard to to debug right now
+# * limit target list removing [s390x, ppc64le] -- these are niche enough
+#   architectures that users can be expected to build on their own, and at the
+#   same time have the largest binaries (presumably because their compilers are
+#   not that optimized). Removing them brings the total size below 50MiB, which
+#   is half the default allowed size on PyPI. Thus, if a release needs to be
+#   made urgently, it can be done without needing to ask PyPI for more space.
 #
 on:
   push:
@@ -27,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target: [x86_64, x86, aarch64, armv7, s390x, ppc64le]
+        target: [x86_64, x86, aarch64, armv7]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
