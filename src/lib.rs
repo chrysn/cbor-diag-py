@@ -3,6 +3,7 @@ use pyo3::types::PyBytes;
 
 /// Given a string in CBOR diagnostic notation, produce its CBOR binary encoding.
 ///
+/// >>> from cbor_diag import *
 /// >>> diag = '{1: "hello"}'
 /// >>> encoded = diag2cbor(diag)
 /// >>> encoded.hex()
@@ -22,6 +23,7 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str) -> PyResult<PyObject> {
 
 /// Given a byte string containing encoded CBOR, produce some diagnostic notation.
 ///
+/// >>> from cbor_diag import *
 /// >>> encoded = bytes.fromhex('a1016568656c6c6f')
 /// >>> cbor2diag(encoded)
 /// '{1: "hello"}'

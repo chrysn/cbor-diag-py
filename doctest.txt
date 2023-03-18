@@ -1,0 +1,15 @@
+These are the doctests that are present in the module, originally in
+src/lib.rs. They are manually extracted until I've figured out why `pytest
+--doctest-modules` does not use them.
+
+>>> from cbor_diag import *
+>>> diag = '{1: "hello"}'
+>>> encoded = diag2cbor(diag)
+>>> encoded.hex()
+'a1016568656c6c6f'
+>>> import cbor2
+>>> cbor2.loads(encoded)
+{1: 'hello'}
+>>> encoded = bytes.fromhex('a1016568656c6c6f')
+>>> cbor2diag(encoded)
+'{1: "hello"}'
