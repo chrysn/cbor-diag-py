@@ -8,8 +8,8 @@ use pyo3::types::PyBytes;
 /// >>> encoded = diag2cbor(diag)
 /// >>> encoded.hex()
 /// 'a1016568656c6c6f'
-/// >>> import cbor2
-/// >>> cbor2.loads(encoded)
+/// >>> import cbor2                # doctest: +SKIP
+/// >>> cbor2.loads(encoded)        # doctest: +SKIP
 /// {1: 'hello'}
 #[pyfunction]
 fn diag2cbor(py: Python<'_>, diagnostic: &str) -> PyResult<PyObject> {
