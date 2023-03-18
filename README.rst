@@ -29,7 +29,19 @@ The built module is renamed from ``cbor_diag`` to ``_cbor_diag``
 (and consequently wrapped manually)
 to avoid it being part of the package's public API.
 
+License
+=======
+
+This package was written by Christian Amsüss <chrysn@fsfe.org>,
+and is published under the terms of MIT_ or Apache-2.0_ license,
+at the user's choice.
+
+Credit for its functionality goes to Nemo157
+as the maintainer of the underlying `cbor-diag crate`_.
+
 .. _`cbor-diag crate`: https://crates.io/crates/cbor-diag
 .. _cbor2: https://pypi.org/project/cbor2/
 .. _maturin: https://www.maturin.rs/
 .. _pyo3: https://pyo3.rs/
+.. _MIT: https://spdx.org/licenses/MIT.html
+.. _Apache-2.0: https://spdx.org/licenses/Apache-2.0.html

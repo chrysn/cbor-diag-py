@@ -2,6 +2,7 @@
 name = "cbor-diag-python-package"
 version = "0.1.0"
 edition = "2021"
+license = "MIT OR Apache-2.0"
 # This is not published through crates.io, but through PyPI.
 publish = false
 

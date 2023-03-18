@@ -6,9 +6,13 @@ build-backend = "maturin"
 name = "cbor-diag"
 requires-python = ">=3.7"
 classifiers = [
-    "Programming Language :: Rust",
+    "Development Status :: 6 - Mature",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
+    "Programming Language :: Rust",
 ]
 
 
