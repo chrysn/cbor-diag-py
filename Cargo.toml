@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "Conversion between CBOR and CBOR Diagnostic Notation"
+repository = "https://github.com/chrysn/cbor-diag-py"
+documentation = "https://cbor-diag.readthedocs.io"
 # This is not published through crates.io, but through PyPI.
 publish = false
 

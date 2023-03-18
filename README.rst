@@ -29,6 +29,9 @@ The built module is renamed from ``cbor_diag`` to ``_cbor_diag``
 (and consequently wrapped manually)
 to avoid it being part of the package's public API.
 
+The package is currently hosted on GitHub at https://github.com/chrysn/cbor-diag-py
+because maturin can `not yet`_ build pipelines for GitLab or codeberg.
+
 License
 =======
 
@@ -43,5 +46,6 @@ as the maintainer of the underlying `cbor-diag crate`_.
 .. _cbor2: https://pypi.org/project/cbor2/
 .. _maturin: https://www.maturin.rs/
 .. _pyo3: https://pyo3.rs/
+.. _`not yet`: https://github.com/PyO3/maturin/issues/1507
 .. _MIT: https://spdx.org/licenses/MIT.html
 .. _Apache-2.0: https://spdx.org/licenses/Apache-2.0.html
