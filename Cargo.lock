@@ -41,7 +41,7 @@ dependencies = [
 
 [[package]]
 name = "cbor-diag-python-package"
-version = "1.0.0-rc1"
+version = "1.0.0"
 dependencies = [
  "cbor-diag",
  "pyo3",
