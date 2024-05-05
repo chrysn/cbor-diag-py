@@ -16,6 +16,3 @@ crate-type = ["cdylib"]
 [dependencies]
 cbor-diag-rs = { package = "cbor-diag", version = "0.1.11" }
 pyo3 = "0.18.1"
-
-[package.metadata.maturin]
-name = "cbor_diag._cbor_diag"
