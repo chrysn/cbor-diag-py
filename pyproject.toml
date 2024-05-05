@@ -19,3 +19,4 @@ classifiers = [
 [tool.maturin]
 features = ["pyo3/extension-module"]
 python-source = "python"
+module-name = "cbor_diag._cbor_diag"
