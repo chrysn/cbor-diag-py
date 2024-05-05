@@ -36,6 +36,7 @@ and largely follows their template.
 The built module is renamed from ``cbor_diag`` to ``_cbor_diag``
 (and consequently wrapped manually)
 to avoid it being part of the package's public API.
+(The need for the workaround is tracked `at maturin`_ and through there `in the typing module`_).
 
 The package is currently hosted on GitHub at https://github.com/chrysn/cbor-diag-py
 because maturin can `not yet`_ build pipelines for GitLab or codeberg.
@@ -56,6 +57,8 @@ as the maintainer of the underlying `cbor-diag crate`_.
 .. _`from PyPI`: https://pypi.org/project/cbor-diag/
 .. _maturin: https://www.maturin.rs/
 .. _pyo3: https://pyo3.rs/
+.. _`at maturin`: https://github.com/PyO3/maturin/issues/1399
+.. _`in the typing module`: https://github.com/python/typing/issues/1333
 .. _`not yet`: https://github.com/PyO3/maturin/issues/1507
 .. _MIT: https://spdx.org/licenses/MIT.html
 .. _Apache-2.0: https://spdx.org/licenses/Apache-2.0.html
