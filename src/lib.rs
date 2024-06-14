@@ -13,11 +13,11 @@ use pyo3::types::PyBytes;
 /// {1: 'hello'}
 #[pyfunction]
 fn diag2cbor(py: Python<'_>, diagnostic: &str) -> PyResult<PyObject> {
-    let bytes = cbor_diag_rs::parse_diag(diagnostic)
-        .map_err(|e| match e {
-            cbor_diag_rs::Error::Todo(s) => pyo3::exceptions::PyValueError::new_err(s),
-        })?
-        .to_bytes();
+    let bytes = cbor_edn::Item::parse(diagnostic)
+        .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?
+        .to_cbor()
+        .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?
+        ;
     Ok(PyBytes::new(py, &bytes).into())
 }
 
@@ -33,14 +33,13 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str) -> PyResult<PyObject> {
 /// * With ``pretty=False``, no space is left after colons, commas etc.
 #[pyfunction(signature = (encoded, *, pretty=true))]
 fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool) -> PyResult<String> {
-    let parsed = cbor_diag_rs::parse_bytes(encoded)
-        .map_err(|e| match e {
-            cbor_diag_rs::Error::Todo(s) => pyo3::exceptions::PyValueError::new_err(s),
-        })?;
+    let mut parsed = cbor_edn::Item::from_cbor(encoded)
+        .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
     if pretty {
-        Ok(parsed.to_diag_pretty())
+        parsed.set_whitespace(cbor_edn::WhitespacePolicy::indented());
+        Ok(parsed.serialize())
     } else {
-        Ok(parsed.to_diag())
+        Ok(parsed.serialize())
     }
 }
 
