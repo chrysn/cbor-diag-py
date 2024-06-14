@@ -13,8 +13,13 @@ use pyo3::types::PyBytes;
 /// {1: 'hello'}
 #[pyfunction]
 fn diag2cbor(py: Python<'_>, diagnostic: &str) -> PyResult<PyObject> {
-    let bytes = cbor_edn::Item::parse(diagnostic)
-        .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?
+    let mut data = cbor_edn::Item::parse(diagnostic)
+        .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
+
+    data.visit_application_literals(&mut cbor_edn::application::ip_aol_to_item);
+    data.visit_application_literals(&mut cbor_edn::application::dt_aol_to_item);
+
+    let bytes = data
         .to_cbor()
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?
         ;
@@ -36,6 +41,8 @@ fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool) -> PyResult<String> 
     let mut parsed = cbor_edn::Item::from_cbor(encoded)
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
     if pretty {
+        parsed.visit_tag(&mut cbor_edn::application::ip_tag_to_aol);
+        parsed.visit_tag(&mut cbor_edn::application::dt_tag_to_aol);
         parsed.set_whitespace(cbor_edn::WhitespacePolicy::indented());
         Ok(parsed.serialize())
     } else {
