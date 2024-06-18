@@ -1,10 +1,11 @@
-=======================================
-cbor-diag: Diagnostic notation for CBOR
-=======================================
+=============================================
+cbor-diag: Diagnostic notation (EDN) for CBOR
+=============================================
 
-This Python module is a minimal wapper around the `cbor-diag crate`_.
-Unlike the crate,
-which offers lots of functionality for manipulating an AST,
+This Python module is a minimal wapper around the `cbor-edn crate`_
+(formally around the `cbor-diag crate`_).
+Unlike those crates,
+which offers lots of functionality for manipulating CBOR and its diagnostic notation,
 this module only exposes two very simple functions:
 
 * ``diag2cbor``, which parses diagnostic notation and produces a corresponding CBOR binary string, and
@@ -28,7 +29,7 @@ and maintainened reactively --
 when changes to the ecosystem threaten to make it unusable.
 
 New features are only expected to be added
-if they are already present in the underlying `cbor-diag crate`_,
+if they are already present in the underlying `cbor-edn crate`_,
 and will likely manifest as extra arguments to ``cbor2diag``.
 
 This package is built using maturin_ and pyo3_
@@ -48,9 +49,11 @@ This package was written by Christian Amsüss <chrysn@fsfe.org>,
 and is published under the terms of MIT_ or Apache-2.0_ license,
 at the user's choice.
 
-Credit for its functionality goes to Nemo157
-as the maintainer of the underlying `cbor-diag crate`_.
+Special thanks to Nemo157 for providing the `cbor-diag crate`_,
+the authors of the `peg crate`_ (which does cbor-edn's heavy lifting),
+and Carsten Bormann for providing a PEG parser ready ABNF in `the edn-literals draft`_.
 
+.. _`cbor-edn crate`: https://crates.io/crates/cbor-edn
 .. _`cbor-diag crate`: https://crates.io/crates/cbor-diag
 .. _cbor2: https://pypi.org/project/cbor2/
 .. _`on readthedocs`: https://cbor-diag.readthedocs.io/
@@ -62,3 +65,5 @@ as the maintainer of the underlying `cbor-diag crate`_.
 .. _`not yet`: https://github.com/PyO3/maturin/issues/1507
 .. _MIT: https://spdx.org/licenses/MIT.html
 .. _Apache-2.0: https://spdx.org/licenses/Apache-2.0.html
+.. _`the peg crate`: https://crates.io/crates/peg
+.. _`the edn-literals draft`: https://www.ietf.org/archive/id/draft-ietf-cbor-edn-literals-09.html

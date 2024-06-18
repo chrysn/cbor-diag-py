@@ -32,9 +32,19 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str) -> PyResult<PyObject> {
 /// >>> cbor2diag(encoded)
 /// '{1: "hello"}'
 ///
+/// By default, this recognizes several CBOR tags into application-oriented literals:
+///
+/// >>> encoded = bytes.fromhex("c105")
+/// >>> cbor2diag(encoded)
+/// "DT'1970-01-01T00:00:05+00:00'"
+///
 /// Key word arguments influence additional details:
 ///
-/// * With ``pretty=False``, no space is left after colons, commas etc.
+/// * With ``pretty=False``, no space is left after colons, commas etc., and no
+///   application-oriented literals are created:
+///
+/// >>> cbor2diag(encoded, pretty=False)
+/// '1(5)'
 #[pyfunction(signature = (encoded, *, pretty=true))]
 fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool) -> PyResult<String> {
     let mut parsed = cbor_edn::Item::from_cbor(encoded)
@@ -50,15 +60,16 @@ fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool) -> PyResult<String> 
 
 /// cbor-diag
 ///
-/// This module provides conversion functions between CBOR's diagnostic notation and its binary
-/// representation.
+/// This module provides conversion functions between CBOR's diagnostic notation (EDN) and its
+/// binary representation.
 ///
-/// See RFC8949_ for the definition of CBOR and its diagnostic notation.
+/// See RFC8949_ for the definition of CBOR, and `the edn-literals draft`_ its diagnostic notation.
 ///
 /// For producing binary representations of CBOR, and for processing them, the cbor2_ package is
 /// recommended.
 ///
 /// .. _RFC8949: https://www.rfc-editor.org/rfc/rfc8949
+/// .. _`the edn-literals draft`: https://www.ietf.org/archive/id/draft-ietf-cbor-edn-literals-09.html
 /// .. _cbor2: https://pypi.org/project/cbor2/
 #[pymodule]
 fn _cbor_diag(_py: Python, m: &PyModule) -> PyResult<()> {
