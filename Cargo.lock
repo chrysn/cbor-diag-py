@@ -45,9 +45,9 @@ dependencies = [
 
 [[package]]
 name = "cbor-edn"
-version = "0.0.3"
+version = "0.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f7827fbae3704e97c01d5ea0ce50ba4a2ab9c3782ebbea4d623ce52939c93854"
+checksum = "6724ef4d36c11dd5b0b250b350fffbd1ffbc3783c771538f8887fff30d47b669"
 dependencies = [
  "chrono",
  "data-encoding",
@@ -55,6 +55,8 @@ dependencies = [
  "encoding_rs",
  "hex",
  "hexfloat2",
+ "num-bigint",
+ "num-traits",
  "peg",
 ]
 
@@ -204,6 +206,25 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d61c719bcfbcf5d62b3a09efa6088de8c54bc0bfcd3ea7ae39fcc186108b8de1"
 dependencies = [
  "autocfg",
+]
+
+[[package]]
+name = "num-bigint"
+version = "0.4.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c165a9ab64cf766f73521c0dd2cfdff64f488b8f0b3e621face3462d3db536d7"
+dependencies = [
+ "num-integer",
+ "num-traits",
+]
+
+[[package]]
+name = "num-integer"
+version = "0.1.46"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7969661fd2958a5cb096e56c8e1ad0444ac2bbcd0061bd28660485a44879858f"
+dependencies = [
+ "num-traits",
 ]
 
 [[package]]
