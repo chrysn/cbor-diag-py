@@ -13,3 +13,5 @@ src/lib.rs. They are manually extracted until I've figured out why `pytest
 >>> encoded = bytes.fromhex('a1016568656c6c6f')
 >>> cbor2diag(encoded)
 '{1: "hello"}'
+>>> cbor2diag(encoded, dummy=True)
+'{1: "hello"}'

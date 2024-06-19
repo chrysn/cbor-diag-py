@@ -31,8 +31,9 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str) -> PyResult<PyObject> {
 /// Key word arguments influence additional details:
 ///
 /// * With ``pretty=False``, no space is left after colons, commas etc.
-#[pyfunction(signature = (encoded, *, pretty=true))]
-fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool) -> PyResult<String> {
+#[pyfunction(signature = (encoded, *, pretty=true, dummy=false))]
+fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool, dummy: bool) -> PyResult<String> {
+    let _ = dummy;
     let parsed = cbor_diag_rs::parse_bytes(encoded)
         .map_err(|e| match e {
             cbor_diag_rs::Error::Todo(s) => pyo3::exceptions::PyValueError::new_err(s),
