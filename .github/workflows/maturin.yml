@@ -8,6 +8,9 @@
 # * remove the "Upload to GitHub release" step
 # * remove the emscripten / pytest step -- this fails for reasons that are too
 #   hard to to debug right now
+# * added --no-index to local package installation during pytest, and remove
+#   MacOS pytest (workaround for 
+#   <https://github.com/PyO3/maturin/issues/1971#issuecomment-2177906051>).
 #
 name: CI
 
@@ -64,7 +67,7 @@ jobs:
         shell: bash
         run: |
           set -e
-          pip install cbor-diag --find-links dist --force-reinstall
+          pip install cbor-diag --no-index --find-links dist --force-reinstall
           pip install pytest
           pytest
       - name: pytest
@@ -80,7 +83,7 @@ jobs:
             pip3 install -U pip pytest
           run: |
             set -e
-            pip3 install cbor-diag --find-links dist --force-reinstall
+            pip3 install cbor-diag --no-index --find-links dist --force-reinstall
             pytest
 
   windows:
@@ -114,7 +117,7 @@ jobs:
         shell: bash
         run: |
           set -e
-          pip install cbor-diag --find-links dist --force-reinstall
+          pip install cbor-diag --no-index --find-links dist --force-reinstall
           pip install pytest
           pytest
 
@@ -143,14 +146,6 @@ jobs:
         with:
           name: wheels-macos-${{ matrix.platform.target }}
           path: dist
-      - name: pytest
-        if: ${{ !startsWith(matrix.platform.target, 'aarch64') }}
-        shell: bash
-        run: |
-          set -e
-          pip install cbor-diag --find-links dist --force-reinstall
-          pip install pytest
-          pytest
 
   emscripten:
     runs-on: ${{ matrix.platform.runner }}
