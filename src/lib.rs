@@ -18,7 +18,7 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str) -> PyResult<PyObject> {
             cbor_diag_rs::Error::Todo(s) => pyo3::exceptions::PyValueError::new_err(s),
         })?
         .to_bytes();
-    Ok(PyBytes::new(py, &bytes).into())
+    Ok(PyBytes::new_bound(py, &bytes).into())
 }
 
 /// Given a byte string containing encoded CBOR, produce some diagnostic notation.
@@ -57,7 +57,7 @@ fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool) -> PyResult<String> 
 /// .. _RFC8949: https://www.rfc-editor.org/rfc/rfc8949
 /// .. _cbor2: https://pypi.org/project/cbor2/
 #[pymodule]
-fn _cbor_diag(_py: Python, m: &PyModule) -> PyResult<()> {
+fn _cbor_diag(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(diag2cbor, m)?)?;
     m.add_function(wrap_pyfunction!(cbor2diag, m)?)?;
     Ok(())
