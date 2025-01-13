@@ -7,7 +7,8 @@
 #
 # * added --no-index to local package installation during pytest, and remove
 #   MacOS pytest (workaround for 
-#   <https://github.com/PyO3/maturin/issues/1971#issuecomment-2177906051>).
+#   <https://github.com/PyO3/maturin/issues/1971#issuecomment-2177906051>)
+#   and from emscripten.
 name: CI
 
 on:
@@ -244,17 +245,6 @@ jobs:
         with:
           name: wasm-wheels
           path: dist
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: pytest
-        run: |
-          set -e
-          pyodide venv .venv
-          source .venv/bin/activate
-          pip install cbor-diag --find-links dist --force-reinstall
-          pip install pytest
-          python -m pytest
 
   sdist:
     runs-on: ubuntu-latest
