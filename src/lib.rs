@@ -10,7 +10,7 @@ use pyo3::types::PyBytes;
 /// 'a1016568656c6c6f'
 /// >>> import cbor2                # doctest: +SKIP
 /// >>> cbor2.loads(encoded)        # doctest: +SKIP
-/// {1:'hello'}
+/// {1: 'hello'}
 #[pyfunction]
 fn diag2cbor(py: Python<'_>, diagnostic: &str) -> PyResult<PyObject> {
     let mut data = cbor_edn::StandaloneItem::parse(diagnostic)
@@ -30,7 +30,7 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str) -> PyResult<PyObject> {
 /// >>> from cbor_diag import *
 /// >>> encoded = bytes.fromhex('a1016568656c6c6f')
 /// >>> cbor2diag(encoded)
-/// '{1:"hello"}'
+/// '{1: "hello"}'
 ///
 /// By default, this recognizes several CBOR tags into application-oriented literals:
 ///

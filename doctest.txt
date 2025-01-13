@@ -9,10 +9,10 @@ src/lib.rs. They are manually extracted until I've figured out why `pytest
 'a1016568656c6c6f'
 >>> import cbor2                # doctest: +SKIP
 >>> cbor2.loads(encoded)        # doctest: +SKIP
-{1:'hello'}
+{1: 'hello'}
 >>> encoded = bytes.fromhex('a1016568656c6c6f')
 >>> cbor2diag(encoded)
-'{1:"hello"}'
+'{1: "hello"}'
 >>> encoded = bytes.fromhex("c105")
 >>> cbor2diag(encoded)
 "DT'1970-01-01T00:00:05+00:00'"
