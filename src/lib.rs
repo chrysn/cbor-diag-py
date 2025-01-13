@@ -11,12 +11,23 @@ use pyo3::types::PyBytes;
 /// >>> import cbor2                # doctest: +SKIP
 /// >>> cbor2.loads(encoded)        # doctest: +SKIP
 /// {1: 'hello'}
-#[pyfunction]
-fn diag2cbor(py: Python<'_>, diagnostic: &str) -> PyResult<PyObject> {
+///
+/// Key word arguments influence additional details:
+///
+/// * With ``to999=True``, unknown application-oriented literals are kept in tag 999 for the
+///   application to process further:
+///
+/// >>> cbor2.loads(diag2cbor("[1, spam'eggs']", to999=True))     # doctest: +SKIP
+/// [1, CBORTag(999, ['spam', 'eggs'])]
+#[pyfunction(signature = (diagnostic, *, to999=false))]
+fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool) -> PyResult<PyObject> {
     let mut data = cbor_edn::StandaloneItem::parse(diagnostic)
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
 
     data.visit_application_literals(&mut cbor_edn::application::all_aol_to_item);
+    if to999 {
+        data.visit_application_literals(&mut cbor_edn::application::any_aol_to_tag999);
+    }
 
     let bytes = data
         .to_cbor()
