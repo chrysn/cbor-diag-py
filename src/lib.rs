@@ -22,7 +22,7 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str) -> PyResult<PyObject> {
         .to_cbor()
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?
         ;
-    Ok(PyBytes::new(py, &bytes).into())
+    Ok(PyBytes::new_bound(py, &bytes).into())
 }
 
 /// Given a byte string containing encoded CBOR, produce some diagnostic notation.
@@ -72,7 +72,7 @@ fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool) -> PyResult<String> 
 /// .. _`the edn-literals draft`: https://www.ietf.org/archive/id/draft-ietf-cbor-edn-literals-09.html
 /// .. _cbor2: https://pypi.org/project/cbor2/
 #[pymodule]
-fn _cbor_diag(_py: Python, m: &PyModule) -> PyResult<()> {
+fn _cbor_diag(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(diag2cbor, m)?)?;
     m.add_function(wrap_pyfunction!(cbor2diag, m)?)?;
     Ok(())
