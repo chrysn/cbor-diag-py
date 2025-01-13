@@ -13,7 +13,7 @@ use pyo3::types::PyBytes;
 /// {1: 'hello'}
 #[pyfunction]
 fn diag2cbor(py: Python<'_>, diagnostic: &str) -> PyResult<PyObject> {
-    let mut data = cbor_edn::Item::parse(diagnostic)
+    let mut data = cbor_edn::StandaloneItem::parse(diagnostic)
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
 
     data.visit_application_literals(&mut cbor_edn::application::all_aol_to_item);
@@ -47,11 +47,11 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str) -> PyResult<PyObject> {
 /// '1(5)'
 #[pyfunction(signature = (encoded, *, pretty=true))]
 fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool) -> PyResult<String> {
-    let mut parsed = cbor_edn::Item::from_cbor(encoded)
+    let mut parsed = cbor_edn::StandaloneItem::from_cbor(encoded)
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
     if pretty {
         parsed.visit_tag(&mut cbor_edn::application::all_tag_prettify);
-        parsed.set_whitespace(cbor_edn::WhitespacePolicy::indented());
+        parsed.set_delimiters(cbor_edn::DelimiterPolicy::indented());
         Ok(parsed.serialize())
     } else {
         Ok(parsed.serialize())
