@@ -59,7 +59,7 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool) -> PyResult<PyObject
 /// >>> cbor2diag(cbor2.dumps([1, 2]), pretty=False)
 /// '[1,2]'
 ///
-/// * With ``from999=True`, CBOR tag 999 will be rendered as application oriented literal. Unlike
+/// * With ``from999=True``, CBOR tag 999 will be rendered as application oriented literal. Unlike
 ///   other tags, this does not happen by default, as that tag is not intended to be used that way
 ///   by default.
 ///
@@ -122,12 +122,12 @@ fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool, from999: bool) -> Py
     Ok(parsed.serialize())
 }
 
-/// cbor-diag
+/// This provides conversion functions between CBOR's diagnostic notation (EDN) and its binary
+/// representation.
 ///
-/// This module provides conversion functions between CBOR's diagnostic notation (EDN) and its
-/// binary representation.
-///
-/// See RFC8949_ for the definition of CBOR, and `the edn-literals draft`_ its diagnostic notation.
+/// CBOR is a binary data format defined in RFC8949_, often used IoT and modern security
+/// applications. Its diagnostic notation is a human readable form of it and looks similar to JSON
+/// (of which it is a superset thereof), and is defined in `the edn-literals draft`_.
 ///
 /// For producing binary representations of CBOR, and for processing them, the cbor2_ package is
 /// recommended.
