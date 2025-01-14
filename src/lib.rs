@@ -8,8 +8,8 @@ use pyo3::types::PyBytes;
 /// >>> encoded = diag2cbor(diag)
 /// >>> encoded.hex()
 /// 'a1016568656c6c6f'
-/// >>> import cbor2                # doctest: +SKIP
-/// >>> cbor2.loads(encoded)        # doctest: +SKIP
+/// >>> import cbor2
+/// >>> cbor2.loads(encoded)
 /// {1: 'hello'}
 ///
 /// Key word arguments influence additional details:
@@ -17,7 +17,7 @@ use pyo3::types::PyBytes;
 /// * With ``to999=True``, unknown application-oriented literals are kept in tag 999 for the
 ///   application to process further:
 ///
-/// >>> cbor2.loads(diag2cbor("[1, spam'eggs']", to999=True))     # doctest: +SKIP
+/// >>> cbor2.loads(diag2cbor("[1, spam'eggs']", to999=True))
 /// [1, CBORTag(999, ['spam', 'eggs'])]
 #[pyfunction(signature = (diagnostic, *, to999=false))]
 fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool) -> PyResult<PyObject> {
