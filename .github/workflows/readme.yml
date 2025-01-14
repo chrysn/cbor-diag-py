@@ -1,0 +1,27 @@
+name: README Lints
+
+# This matches the Maturin rules
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - '*'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  rst:
+    name: Validate README
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "Run rst2html"
+        run: |
+          set -e
+          pip install docutils
+          rst2html --exit 2 README.rst >/dev/null
