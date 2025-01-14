@@ -9,6 +9,7 @@
 #   MacOS pytest (workaround for 
 #   <https://github.com/PyO3/maturin/issues/1971#issuecomment-2177906051>)
 #   and from emscripten.
+# * added `pip install cbor2` in front of every pytest
 name: CI
 
 on:
@@ -66,8 +67,9 @@ jobs:
           set -e
           python3 -m venv .venv
           source .venv/bin/activate
-          pip install cbor-diag --find-links dist --force-reinstall
+          pip install cbor-diag --no-index --find-links dist --force-reinstall
           pip install pytest
+          pip install cbor2
           pytest
       - name: pytest
         if: ${{ !startsWith(matrix.platform.target, 'x86') && matrix.platform.target != 'ppc64' }}
@@ -83,6 +85,7 @@ jobs:
           run: |
             set -e
             pip3 install cbor-diag --no-index --find-links dist --force-reinstall
+            pip3 install cbor2
             pytest
 
   musllinux:
@@ -128,6 +131,7 @@ jobs:
             source .venv/bin/activate
             pip install cbor-diag --no-index --find-links dist --force-reinstall
             pip install pytest
+            pip install cbor2
             pytest
       - name: pytest
         if: ${{ !startsWith(matrix.platform.target, 'x86') }}
@@ -143,7 +147,8 @@ jobs:
             python3 -m virtualenv .venv
             source .venv/bin/activate
             pip install pytest
-            pip install cbor-diag --find-links dist --force-reinstall
+            pip install cbor-diag --no-index --find-links dist --force-reinstall
+            pip install cbor2
             pytest
 
   windows:
@@ -179,8 +184,9 @@ jobs:
           set -e
           python3 -m venv .venv
           source .venv/Scripts/activate
-          pip install cbor-diag --find-links dist --force-reinstall
+          pip install cbor-diag --no-index --find-links dist --force-reinstall
           pip install pytest
+          pip install cbor2
           pytest
 
   macos:
