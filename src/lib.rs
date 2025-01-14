@@ -22,7 +22,7 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str) -> PyResult<PyObject> {
         .to_cbor()
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?
         ;
-    Ok(PyBytes::new_bound(py, &bytes).into())
+    Ok(PyBytes::new(py, &bytes).into())
 }
 
 /// Given a byte string containing encoded CBOR, produce some diagnostic notation.
