@@ -10,10 +10,10 @@ sphinx:
   builder: html
 
 build:
-  os: "ubuntu-20.04"
+  os: "ubuntu-24.04"
   tools:
-    python: "3.9"
-    rust: "1.64"
+    python: "3.12"
+    rust: "1.82"
 
 python:
   install:
