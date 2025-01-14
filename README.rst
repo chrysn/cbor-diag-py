@@ -65,5 +65,5 @@ and Carsten Bormann for providing a PEG parser ready ABNF in `the edn-literals d
 .. _`not yet`: https://github.com/PyO3/maturin/issues/1507
 .. _MIT: https://spdx.org/licenses/MIT.html
 .. _Apache-2.0: https://spdx.org/licenses/Apache-2.0.html
-.. _`the peg crate`: https://crates.io/crates/peg
+.. _`peg crate`: https://crates.io/crates/peg
 .. _`the edn-literals draft`: https://www.ietf.org/archive/id/draft-ietf-cbor-edn-literals-16.html
