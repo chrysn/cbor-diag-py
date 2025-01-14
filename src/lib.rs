@@ -56,6 +56,8 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool) -> PyResult<PyObject
 ///
 /// >>> cbor2diag(encoded, pretty=False)
 /// '1(5)'
+/// >>> cbor2diag(cbor2.dumps([1, 2]), pretty=False)
+/// '[1,2]'
 ///
 /// * With ``from999=True`, CBOR tag 999 will be rendered as application oriented literal. Unlike
 ///   other tags, this does not happen by default, as that tag is not intended to be used that way
@@ -69,6 +71,8 @@ fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool, from999: bool) -> Py
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
     if pretty {
         parsed.visit_tag(&mut cbor_edn::application::all_tag_prettify);
+    }
+    if from999 {
         parsed.visit_tag(&mut |tag, item: &mut cbor_edn::Item| {
             if tag != 999 {
                 return Ok(());
@@ -109,11 +113,13 @@ fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool, from999: bool) -> Py
             *item = cbor_edn::Item::new_application_literal(&ident, &value).expect("Was just produced by parsing");
             Ok(())
         });
-        parsed.set_delimiters(cbor_edn::DelimiterPolicy::indented());
-        Ok(parsed.serialize())
-    } else {
-        Ok(parsed.serialize())
     }
+    if pretty {
+        parsed.set_delimiters(cbor_edn::DelimiterPolicy::indented());
+    } else {
+        parsed.set_delimiters(cbor_edn::DelimiterPolicy::DiscardAll);
+    }
+    Ok(parsed.serialize())
 }
 
 /// cbor-diag

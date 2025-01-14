@@ -21,5 +21,7 @@ src/lib.rs. They are manually extracted until I've figured out why `pytest
 "DT'1970-01-01T00:00:05+00:00'"
 >>> cbor2diag(encoded, pretty=False)
 '1(5)'
+>>> cbor2diag(cbor2.dumps([1, 2]), pretty=False)
+'[1,2]'
 >>> cbor2diag(bytes.fromhex("d9 03e7 82 63 666f6f 63 626172"), from999=True)
 "foo'bar'"
