@@ -78,12 +78,7 @@ fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool, from999: bool) -> Py
                 return Ok(());
             }
             let tagged = item.get_tagged().expect("Visitor promises this is true");
-            // This is the most absurd effect of <https://codeberg.org/chrysn/cbor-edn/issues/16>:
-            // We have to serialize the item, turn it into a sequence, and use that
-            let tagged_serialized = tagged.serialize();
-            let mut tagged_as_seq = cbor_edn::Sequence::parse(&tagged_serialized).unwrap();
-            let tagged_again = tagged_as_seq.get_items_mut().next().unwrap();
-            let Ok(mut items) = tagged_again.get_array_items() else {
+            let Ok(mut items) = tagged.item().get_array_items() else {
                 return Err("should be array".into());
             };
             let Some(ident) = items.next() else {
@@ -95,22 +90,15 @@ fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool, from999: bool) -> Py
             let None = items.next() else {
                 return Err("should contain 2 items".into());
             };
-            // This is crude for lack of <https://codeberg.org/chrysn/cbor-edn/issues/16>, but
-            // shows how to work around missing parts
-            let ident = ident.serialize();
-            let value = value.serialize();
-            if !ident.starts_with('"') || !value.starts_with('"') {
-                return Err("should be strings".into());
-            }
-            let constructed = format!("{}'{}'", ident.trim_matches('"'), value.trim_matches('"'));
             drop(items);
-            let mut constructed = cbor_edn::Sequence::parse(&constructed)
-                .map_err(|_| "Might contain escapes that can't be processed yet")?;
-            let constructed = constructed.get_items_mut().next().unwrap();
-            // Can't use constructed yet because of
-            // <https://codeberg.org/chrysn/cbor-edn/issues/17>
-            let (ident, value) = constructed.get_application_literal().expect("Was parsed successfully from something roughly app literal shaped");
-            *item = cbor_edn::Item::new_application_literal(&ident, &value).expect("Was just produced by parsing");
+            let ident = ident.get_string()
+                .map_err(|_| "ident should be string")?;
+            let value = value.get_string()
+                .map_err(|_| "value should be string")?;
+            let new_item = cbor_edn::Item::new_application_literal(&ident, &value)
+                // I don't see how value could ever trigger anything here
+                .map_err(|_| "ident string is unsuitable for application-oriented literal")?;
+            *item = new_item;
             Ok(())
         });
     }

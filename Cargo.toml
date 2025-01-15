@@ -14,5 +14,5 @@ name = "_cbor_diag"
 crate-type = ["cdylib"]
 
 [dependencies]
-cbor-edn = { version = "0.0.7", default-features = false }
+cbor-edn = { version = "0.0.8", default-features = false }
 pyo3 = "0.23"
