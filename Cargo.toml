@@ -15,4 +15,5 @@ crate-type = ["cdylib"]
 
 [dependencies]
 cbor-edn = { version = "0.0.8", default-features = false }
+defmt = "1.0.1"
 pyo3 = "0.23"

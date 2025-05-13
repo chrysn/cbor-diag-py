@@ -67,6 +67,12 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool) -> PyResult<PyObject
 /// "foo'bar'"
 #[pyfunction(signature = (encoded, *, pretty=true, from999=false))]
 fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool, from999: bool) -> PyResult<String> {
+    defmt::info!("Completely senseless defmt statement on {}", pretty);
+    #[inline(never)]
+    fn f() {
+        defmt::trace!("Completely senseless defmt statement");
+    }
+    f();
     let mut parsed = cbor_edn::StandaloneItem::from_cbor(encoded)
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
     if pretty {
