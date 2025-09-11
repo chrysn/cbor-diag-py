@@ -20,7 +20,7 @@ use pyo3::types::PyBytes;
 /// >>> cbor2.loads(diag2cbor("[1, spam'eggs']", to999=True))
 /// [1, CBORTag(999, ['spam', 'eggs'])]
 #[pyfunction(signature = (diagnostic, *, to999=false))]
-fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool) -> PyResult<PyObject> {
+fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool) -> PyResult<Py<PyBytes>> {
     let mut data = cbor_edn::StandaloneItem::parse(diagnostic)
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
 
