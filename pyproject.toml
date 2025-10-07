@@ -16,9 +16,14 @@ dynamic = [
     "license",
     "readme",
     "requires-python",
-    "urls",
+    # "urls", disabled, see project.urls
     "version",
 ]
+
+[project.urls]
+# Workaround for <https://github.com/PyO3/maturin/pull/2760>
+Documentation = "https://cbor-diag.readthedocs.io"
+"Source Code" = "https://github.com/chrysn/cbor-diag-py"
 
 [tool.maturin]
 features = ["pyo3/extension-module"]
