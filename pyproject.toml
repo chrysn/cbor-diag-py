@@ -4,17 +4,26 @@ build-backend = "maturin"
 
 [project]
 name = "cbor-diag"
-requires-python = ">=3.7"
 classifiers = [
     "Development Status :: 6 - Mature",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
     "Programming Language :: Rust",
 ]
-dynamic = ["version"]
+dynamic = [
+    "description",
+    "license",
+    "readme",
+    "requires-python",
+    # "urls", disabled, see project.urls
+    "version",
+]
+
+[project.urls]
+# Workaround for <https://github.com/PyO3/maturin/pull/2760>
+Documentation = "https://cbor-diag.readthedocs.io"
+"Source Code" = "https://github.com/chrysn/cbor-diag-py"
 
 [tool.maturin]
 features = ["pyo3/extension-module"]
