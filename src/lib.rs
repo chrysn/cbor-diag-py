@@ -1,6 +1,6 @@
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
-use pyo3_stub_gen::{derive::gen_stub_pyfunction, define_stub_info_gatherer};
+use pyo3_stub_gen::{define_stub_info_gatherer, derive::gen_stub_pyfunction};
 
 /// Given a string in CBOR diagnostic notation, produce its CBOR binary encoding.
 ///
@@ -33,8 +33,7 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool) -> PyResult<Py<PyByt
 
     let bytes = data
         .to_cbor()
-        .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?
-        ;
+        .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
     Ok(PyBytes::new(py, &bytes).into())
 }
 
@@ -69,10 +68,13 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool) -> PyResult<Py<PyByt
 /// "foo'bar'"
 #[gen_stub_pyfunction]
 #[pyfunction(signature = (encoded, *, pretty=true, from999=false))]
-fn cbor2diag(_py: Python<'_>,
+fn cbor2diag(
+    _py: Python<'_>,
     // Staying generic for compatibility (we do still accept a [int]), but declare just bytes.
-    #[gen_stub(override_type(type_repr = "bytes"))]
-    encoded: &[u8], pretty: bool, from999: bool) -> PyResult<String> {
+    #[gen_stub(override_type(type_repr = "bytes"))] encoded: &[u8],
+    pretty: bool,
+    from999: bool,
+) -> PyResult<String> {
     let mut parsed = cbor_edn::StandaloneItem::from_cbor(encoded)
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
     if pretty {
@@ -97,10 +99,8 @@ fn cbor2diag(_py: Python<'_>,
                 return Err("should contain 2 items".into());
             };
             drop(items);
-            let ident = ident.get_string()
-                .map_err(|_| "ident should be string")?;
-            let value = value.get_string()
-                .map_err(|_| "value should be string")?;
+            let ident = ident.get_string().map_err(|_| "ident should be string")?;
+            let value = value.get_string().map_err(|_| "value should be string")?;
             let new_item = cbor_edn::Item::new_application_literal(&ident, &value)
                 // I don't see how value could ever trigger anything here
                 .map_err(|_| "ident string is unsuitable for application-oriented literal")?;
