@@ -1,0 +1,28 @@
+name: Verify generated files
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify stubs
+        run: |
+          set -ex
+          cargo run --bin stub_gen
+          # Something in all our setup doesn't see through the rename and
+          # -reimport, but as we're re-exporting everything, signatures can
+          # just be moved.
+          mv python/cbor_diag/_cbor_diag/__init__.pyi python/cbor_diag/__init__.pyi
+          git diff --exit-code
