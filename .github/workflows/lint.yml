@@ -1,24 +1,31 @@
 name: README Lints
 
-# This matches the Maturin rules
-
 on:
   push:
     branches:
       - main
-      - master
     tags:
       - '*'
   pull_request:
   workflow_dispatch:
 
 jobs:
+  fmt:
+    name: Check various Rust lints
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: cargo fmt --check
+      - run: cargo check
+      - run: cargo clippy -- --deny clippy::all
+      - run: RUSTDOCFLAGS="-D warnings" cargo doc --no-deps
+
   rst:
     name: Validate README
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: "Run rst2html"
         run: |
