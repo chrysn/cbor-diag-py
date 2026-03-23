@@ -5,6 +5,7 @@
 #
 # and
 #
+# * added --no-index to local package installation during pytest
 # * added `pip install cbor2` in front of every pytest
 # * completely removed the emscripten job (due to
 #   <https://github.com/mymindstorm/setup-emsdk/issues/47>), and its entry
@@ -66,7 +67,7 @@ jobs:
           set -e
           python3 -m venv .venv
           source .venv/bin/activate
-          pip install cbor-diag --find-links dist --force-reinstall
+          pip install cbor-diag --no-index --find-links dist --force-reinstall
           pip install pytest
           pip install cbor2
           pytest
@@ -83,7 +84,7 @@ jobs:
             pip3 install -U pip pytest
           run: |
             set -e
-            pip3 install cbor-diag --find-links dist --force-reinstall
+            pip3 install cbor-diag --no-index --find-links dist --force-reinstall
             pip3 install cbor2
             pytest
 
@@ -144,7 +145,7 @@ jobs:
             python3 -m virtualenv .venv
             source .venv/bin/activate
             pip install pytest
-            pip install cbor-diag --find-links dist --force-reinstall
+            pip install cbor-diag --no-index --find-links dist --force-reinstall
             pip install cbor2
             pytest
 
@@ -185,7 +186,7 @@ jobs:
           set -e
           python3 -m venv .venv
           source .venv/Scripts/activate
-          pip install cbor-diag --find-links dist --force-reinstall
+          pip install cbor-diag --no-index --find-links dist --force-reinstall
           pip install pytest
           pip install cbor2
           pytest
@@ -220,7 +221,7 @@ jobs:
           set -e
           python3 -m venv .venv
           source .venv/bin/activate
-          pip install cbor-diag --find-links dist --force-reinstall
+          pip install cbor-diag --no-index --find-links dist --force-reinstall
           pip install pytest
           pip install cbor2
           pytest
