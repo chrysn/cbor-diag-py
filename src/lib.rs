@@ -1,5 +1,6 @@
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
+use pyo3_stub_gen::{derive::gen_stub_pyfunction, define_stub_info_gatherer};
 
 /// Given a string in CBOR diagnostic notation, produce its CBOR binary encoding.
 ///
@@ -19,6 +20,7 @@ use pyo3::types::PyBytes;
 ///
 /// >>> cbor2.loads(diag2cbor("[1, spam'eggs']", to999=True))
 /// [1, CBORTag(999, ['spam', 'eggs'])]
+#[gen_stub_pyfunction]
 #[pyfunction(signature = (diagnostic, *, to999=false))]
 fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool) -> PyResult<Py<PyBytes>> {
     let mut data = cbor_edn::StandaloneItem::parse(diagnostic)
@@ -65,8 +67,12 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool) -> PyResult<Py<PyByt
 ///
 /// >>> cbor2diag(bytes.fromhex("d9 03e7 82 63 666f6f 63 626172"), from999=True)
 /// "foo'bar'"
+#[gen_stub_pyfunction]
 #[pyfunction(signature = (encoded, *, pretty=true, from999=false))]
-fn cbor2diag(_py: Python<'_>, encoded: &[u8], pretty: bool, from999: bool) -> PyResult<String> {
+fn cbor2diag(_py: Python<'_>,
+    // Staying generic for compatibility (we do still accept a [int]), but declare just bytes.
+    #[gen_stub(override_type(type_repr = "bytes"))]
+    encoded: &[u8], pretty: bool, from999: bool) -> PyResult<String> {
     let mut parsed = cbor_edn::StandaloneItem::from_cbor(encoded)
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
     if pretty {
@@ -129,3 +135,5 @@ fn _cbor_diag(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(cbor2diag, m)?)?;
     Ok(())
 }
+
+define_stub_info_gatherer!(stub_info);

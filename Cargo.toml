@@ -11,8 +11,10 @@ publish = false
 
 [lib]
 name = "_cbor_diag"
-crate-type = ["cdylib"]
+# rlib for pyo3-stub-gen
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 cbor-edn = { version = "0.0.8", default-features = false }
 pyo3 = "0.28.0"
+pyo3-stub-gen = { version = "0.20.0", default-features = false, features = ["infer_signature"] }
