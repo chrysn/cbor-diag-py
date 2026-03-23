@@ -15,10 +15,12 @@ dynamic = [
     "description",
     "license",
     "readme",
-    "requires-python",
+    # "requires-python", disabled while we have an explit one for pyo3-stubs-gen that needs to override PyO3's
     # "urls", disabled, see project.urls
     "version",
 ]
+# due to pyo3-stubs-gen -- disable once we're back to "anything that pyo3 can do" (probably once that drops 3.9 support)
+requires-python = ">=3.10"
 
 [project.urls]
 # Workaround for <https://github.com/PyO3/maturin/pull/2760>
