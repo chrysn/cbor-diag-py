@@ -7,7 +7,7 @@ __all__ = [
     "diag2cbor",
 ]
 
-def cbor2diag(encoded: bytes, *, pretty: builtins.bool = True, from999: builtins.bool = False) -> builtins.str:
+def cbor2diag(encoded: bytes, *, pretty: builtins.bool = ..., from999: builtins.bool = ...) -> builtins.str:
     r"""
     Given a byte string containing encoded CBOR, produce some diagnostic notation.
     
@@ -40,7 +40,7 @@ def cbor2diag(encoded: bytes, *, pretty: builtins.bool = True, from999: builtins
     "foo'bar'"
     """
 
-def diag2cbor(diagnostic: builtins.str, *, to999: builtins.bool = False) -> bytes:
+def diag2cbor(diagnostic: builtins.str, *, to999: builtins.bool = ...) -> bytes:
     r"""
     Given a string in CBOR diagnostic notation, produce its CBOR binary encoding.
     

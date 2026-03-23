@@ -17,4 +17,9 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 cbor-edn = { version = "0.0.8", default-features = false }
 pyo3 = "0.28.0"
-pyo3-stub-gen = { version = "0.20.0", default-features = false, features = ["infer_signature"] }
+# Not using the infer_signature feature as that is incompatible with pypy.
+#
+# (This means that anything that uses type inference will not see which default
+# values are applied; I think this can be accepted until there is a prettier
+# solution for generating the stubs).
+pyo3-stub-gen = { version = "0.20.0", default-features = false }
