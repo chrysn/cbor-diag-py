@@ -129,6 +129,23 @@ fn cbor2diag(
 /// .. Styling those is just too much effort in ReST
 /// .. _`loads()`: https://cbor2.readthedocs.io/en/latest/api.html#cbor2.loads
 /// .. _`dumps()`: https://cbor2.readthedocs.io/en/latest/api.html#cbor2.dumps
+///
+/// Stability
+/// ---------
+///
+/// This package aims to be semver stable, in that its API only changes in breaking ways when the
+/// major version is increased.
+///
+/// However, this does so far only extend to the usage, and not to the outcome. Until there is a
+/// published RFC, there *will* be changes to which values are accepted as EDN, and which EDN is
+/// produced for some CBOR items. If this is not acceptable for your use case, please depend on a
+/// specific minor version of this package. The behavior will not change over patch versions.
+///
+/// Until this note is removed, new minor versions may also changes to which (especially exotic)
+/// values are accepted outside of changes to the specification.
+///
+/// Functions
+/// ---------
 #[pymodule]
 fn _cbor_diag(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(diag2cbor, m)?)?;
