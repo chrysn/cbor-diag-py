@@ -31,3 +31,6 @@ Documentation = "https://cbor-diag.readthedocs.io"
 features = ["pyo3/extension-module"]
 python-source = "python"
 module-name = "cbor_diag._cbor_diag"
+
+[tool.codespell]
+ignore-words-list = ["EDN", "edn"]
