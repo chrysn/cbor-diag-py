@@ -15,7 +15,7 @@ dynamic = [
     "description",
     "license",
     "readme",
-    # "requires-python", disabled while we have an explit one for pyo3-stubs-gen that needs to override PyO3's
+    # "requires-python", disabled while we have an explicit one for pyo3-stubs-gen that needs to override PyO3's
     # "urls", disabled, see project.urls
     "version",
 ]
@@ -31,3 +31,6 @@ Documentation = "https://cbor-diag.readthedocs.io"
 features = ["pyo3/extension-module"]
 python-source = "python"
 module-name = "cbor_diag._cbor_diag"
+
+[tool.codespell]
+ignore-words-list = ["EDN", "edn"]

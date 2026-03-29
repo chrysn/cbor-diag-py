@@ -2,7 +2,7 @@
 cbor-diag: Diagnostic notation (EDN) for CBOR
 =============================================
 
-This Python module is a minimal wapper around the `cbor-edn crate`_
+This Python module is a minimal wrapper around the `cbor-edn crate`_
 (formally around the `cbor-diag crate`_).
 Unlike those crates,
 which offers lots of functionality for manipulating CBOR and its diagnostic notation,
