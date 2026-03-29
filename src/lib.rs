@@ -89,13 +89,8 @@ fn cbor2diag(
             let Ok(mut items) = tagged.item().get_array_items() else {
                 return Err("should be array".into());
             };
-            let Some(ident) = items.next() else {
-                return Err("should contain 2 items".into());
-            };
-            let Some(value) = items.next() else {
-                return Err("should contain 2 items".into());
-            };
-            let None = items.next() else {
+            let (Some(ident), Some(value), None) = (items.next(), items.next(), items.next())
+            else {
                 return Err("should contain 2 items".into());
             };
             drop(items);
