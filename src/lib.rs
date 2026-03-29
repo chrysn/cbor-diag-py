@@ -118,12 +118,17 @@ fn cbor2diag(
 /// applications. Its diagnostic notation is a human readable form of it and looks similar to JSON
 /// (of which it is a superset thereof), and is defined in `the edn-literals draft`_.
 ///
-/// For producing binary representations of CBOR, and for processing them, the cbor2_ package is
-/// recommended.
+/// For producing binary representations of CBOR, and for processing them, the cbor2_ package's
+/// `loads()`_ and `dumps()`_  functions is recommended. This is not done automatically because
+/// those come with a variety of arguments that influence the representation in Python,
+/// orthogonally to the diagnostic notation.
 ///
 /// .. _RFC8949: https://www.rfc-editor.org/rfc/rfc8949
 /// .. _`the edn-literals draft`: https://www.ietf.org/archive/id/draft-ietf-cbor-edn-literals-09.html
 /// .. _cbor2: https://pypi.org/project/cbor2/
+/// .. Styling those is just too much effort in ReST
+/// .. _`loads()`: https://cbor2.readthedocs.io/en/latest/api.html#cbor2.loads
+/// .. _`dumps()`: https://cbor2.readthedocs.io/en/latest/api.html#cbor2.dumps
 #[pymodule]
 fn _cbor_diag(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(diag2cbor, m)?)?;
