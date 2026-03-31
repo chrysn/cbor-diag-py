@@ -15,7 +15,7 @@ name = "_cbor_diag"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-cbor-edn = { version = "0.0.8", default-features = false }
+cbor-edn = { version = "0.0.10", default-features = false }
 pyo3 = "0.28.0"
 # Not using the infer_signature feature as that is incompatible with pypy.
 #
