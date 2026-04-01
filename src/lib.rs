@@ -143,10 +143,10 @@ fn check_sequence_expectation(data: &cbor_edn::Sequence, seq: bool) -> PyResult<
     if count == 1 {
         Ok(())
     } else {
-        return Err(pyo3::exceptions::PyValueError::new_err(format!(
+        Err(pyo3::exceptions::PyValueError::new_err(format!(
             "Expected single item, found sequence of {}",
             count
-        )));
+        )))
     }
 }
 
