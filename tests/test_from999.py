@@ -26,4 +26,4 @@ def test_failing():
         encoded = cbor2.dumps(item)
         edn = cbor2diag(encoded, from999=True)
         # It emits some comment, we don't check for which precisely.
-        assert edn.startswith(cbor2diag(encoded) + '/ '), f"Itemm was expected to just ignore from999, but produced {edn}: {item}"
+        assert edn.startswith(cbor2diag(encoded) + '/ '), f"Item {item!r} was expected to leave the broken tag 999 and show an error inline, but produced {edn!r}"
