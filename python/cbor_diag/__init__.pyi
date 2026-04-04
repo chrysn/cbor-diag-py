@@ -7,7 +7,7 @@ __all__ = [
     "diag2cbor",
 ]
 
-def cbor2diag(encoded: bytes, *, pretty: builtins.bool = ..., from999: builtins.bool = ...) -> builtins.str:
+def cbor2diag(encoded: bytes, *, pretty: builtins.bool = ..., from999: builtins.bool = ..., seq: builtins.bool = ...) -> builtins.str:
     r"""
     Given a byte string containing encoded CBOR, produce some diagnostic notation.
     
@@ -32,6 +32,15 @@ def cbor2diag(encoded: bytes, *, pretty: builtins.bool = ..., from999: builtins.
     >>> cbor2diag(cbor2.dumps([1, 2]), pretty=False)
     '[1,2]'
     
+    * With `seq=True`, [CBOR sequences](https://datatracker.ietf.org/doc/html/rfc8742)
+      are tolerated:
+    
+    >>> print(cbor2diag('\x01\x02\x03', seq=True))
+    1,
+    2,
+    3
+    <BLANKLINE>
+    
     * With ``from999=True``, CBOR tag 999 will be rendered as application oriented literal. Unlike
       other tags, this does not happen by default, as that tag is not intended to be used that way
       by default.
@@ -40,7 +49,7 @@ def cbor2diag(encoded: bytes, *, pretty: builtins.bool = ..., from999: builtins.
     "foo'bar'"
     """
 
-def diag2cbor(diagnostic: builtins.str, *, to999: builtins.bool = ...) -> bytes:
+def diag2cbor(diagnostic: builtins.str, *, to999: builtins.bool = ..., seq: builtins.bool = ...) -> bytes:
     r"""
     Given a string in CBOR diagnostic notation, produce its CBOR binary encoding.
     
@@ -60,5 +69,11 @@ def diag2cbor(diagnostic: builtins.str, *, to999: builtins.bool = ...) -> bytes:
     
     >>> cbor2.loads(diag2cbor("[1, spam'eggs']", to999=True))
     [1, CBORTag(999, ['spam', 'eggs'])]
+    
+    * With `seq=True`, [CBOR sequences](https://datatracker.ietf.org/doc/html/rfc8742)
+      are tolerated:
+    
+    >>> diag2cbor("1, 2, 3", seq=True)
+    '\x01\x02\x03'
     """
 

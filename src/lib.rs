@@ -20,11 +20,19 @@ use pyo3_stub_gen::{define_stub_info_gatherer, derive::gen_stub_pyfunction};
 ///
 /// >>> cbor2.loads(diag2cbor("[1, spam'eggs']", to999=True))
 /// [1, CBORTag(999, ['spam', 'eggs'])]
+///
+/// * With `seq=True`, [CBOR sequences](https://datatracker.ietf.org/doc/html/rfc8742)
+///   are tolerated:
+///
+/// >>> diag2cbor("1, 2, 3", seq=True)
+/// '\x01\x02\x03'
 #[gen_stub_pyfunction]
-#[pyfunction(signature = (diagnostic, *, to999=false))]
-fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool) -> PyResult<Py<PyBytes>> {
-    let mut data = cbor_edn::StandaloneItem::parse(diagnostic)
+#[pyfunction(signature = (diagnostic, *, to999=false, seq=false))]
+fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool, seq: bool) -> PyResult<Py<PyBytes>> {
+    let mut data = cbor_edn::Sequence::parse(diagnostic)
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
+
+    check_sequence_expectation(&data, seq)?;
 
     data.visit_application_literals(&mut cbor_edn::application::all_aol_to_item);
     if to999 {
@@ -60,6 +68,15 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool) -> PyResult<Py<PyByt
 /// >>> cbor2diag(cbor2.dumps([1, 2]), pretty=False)
 /// '[1,2]'
 ///
+/// * With `seq=True`, [CBOR sequences](https://datatracker.ietf.org/doc/html/rfc8742)
+///   are tolerated:
+///
+/// >>> print(cbor2diag('\x01\x02\x03', seq=True))
+/// 1,
+/// 2,
+/// 3
+/// <BLANKLINE>
+///
 /// * With ``from999=True``, CBOR tag 999 will be rendered as application oriented literal. Unlike
 ///   other tags, this does not happen by default, as that tag is not intended to be used that way
 ///   by default.
@@ -67,16 +84,20 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool) -> PyResult<Py<PyByt
 /// >>> cbor2diag(bytes.fromhex("d9 03e7 82 63 666f6f 63 626172"), from999=True)
 /// "foo'bar'"
 #[gen_stub_pyfunction]
-#[pyfunction(signature = (encoded, *, pretty=true, from999=false))]
+#[pyfunction(signature = (encoded, *, pretty=true, from999=false, seq=false))]
 fn cbor2diag(
     _py: Python<'_>,
     // Staying generic for compatibility (we do still accept a [int]), but declare just bytes.
     #[gen_stub(override_type(type_repr = "bytes"))] encoded: &[u8],
     pretty: bool,
     from999: bool,
+    seq: bool,
 ) -> PyResult<String> {
-    let mut parsed = cbor_edn::StandaloneItem::from_cbor(encoded)
+    let mut parsed = cbor_edn::Sequence::from_cbor(encoded)
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
+
+    check_sequence_expectation(&parsed, seq)?;
+
     if pretty {
         parsed.visit_tag(&mut cbor_edn::application::all_tag_prettify);
     }
@@ -109,6 +130,24 @@ fn cbor2diag(
         parsed.set_delimiters(cbor_edn::DelimiterPolicy::DiscardAll);
     }
     Ok(parsed.serialize())
+}
+
+/// "Raises" a ValueError if the sequence is really a sequence (and not really just a single item),
+/// unless `seq=true` (i.e., the user *asked* for sequence handling).
+fn check_sequence_expectation(data: &cbor_edn::Sequence, seq: bool) -> PyResult<()> {
+    if seq {
+        return Ok(());
+    }
+
+    let count = data.items().count();
+    if count == 1 {
+        Ok(())
+    } else {
+        Err(pyo3::exceptions::PyValueError::new_err(format!(
+            "Expected single item, found sequence of {}",
+            count
+        )))
+    }
 }
 
 /// This provides conversion functions between CBOR's diagnostic notation (EDN) and its binary

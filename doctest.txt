@@ -12,6 +12,8 @@ src/lib.rs. They are manually extracted until I've figured out why `pytest
 {1: 'hello'}
 >>> cbor2.loads(diag2cbor("[1, spam'eggs']", to999=True))
 [1, CBORTag(999, ['spam', 'eggs'])]
+>>> diag2cbor("1, 2, 3", seq=True)
+b'\x01\x02\x03'
 >>> from cbor_diag import *
 >>> encoded = bytes.fromhex('a1016568656c6c6f')
 >>> cbor2diag(encoded)
@@ -23,5 +25,10 @@ src/lib.rs. They are manually extracted until I've figured out why `pytest
 '1(5)'
 >>> cbor2diag(cbor2.dumps([1, 2]), pretty=False)
 '[1,2]'
+>>> print(cbor2diag(b'\x01\x02\x03', seq=True))
+1,
+2,
+3
+<BLANKLINE>
 >>> cbor2diag(bytes.fromhex("d9 03e7 82 63 666f6f 63 626172"), from999=True)
 "foo'bar'"
