@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Unreleased
-----------
+1.1.4
+-----
 
 * Add support for CBOR sequences using `seq=True` argument
 * Update cbor-edn dependency (no changes in behavior)
