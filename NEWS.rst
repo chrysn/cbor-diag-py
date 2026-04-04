@@ -1,12 +1,15 @@
-# Changelog
+Changelog
+=========
 
-## Unreleased
+Unreleased
+----------
 
 * Add support for CBOR sequences using `seq=True` argument
 * Update cbor-edn dependency (no changes in behavior)
 * Extend test coverage
 
-## 1.1.3
+1.1.3
+-----
 
 * Add type stubs using pyo3-stub-gen
 * Drop support for Python 3.9
@@ -14,17 +17,20 @@
 * Update build dependencies (Maturin, PyO3)
 * Minor refacteoring
 
-## 1.1.2
+1.1.2
+-----
 
 * Package metadata is exported through maturin, populating PyPI presentation
 
-## 1.1.1
+1.1.1
+-----
 
 * Editorial changes to documentation.
 * Dependencies updated.
 * Simplified code based on cbor-edn 0.0.8 enhancements.
 
-## 1.1.0
+1.1.0
+-----
 
 * The backend is switched from cbor-diag to cbor-edn.
 
@@ -40,13 +46,15 @@
 * Maturin and PyO3 are updated.
 
 
-## 1.0.3
+1.0.3
+-----
 
 * PyO3 updated to 0.22, therefore supporting Python 3.13
 * CI fixes
 
 
-## 1.0.2
+1.0.2
+-----
 
 * Maturin updated to version 1.5
 * Updates to Cargo.lock
@@ -56,7 +64,8 @@
   features.
 
 
-## 1.0.1
+1.0.1
+-----
 
 * Documentation updates
 * Updates to Cargo.lock
