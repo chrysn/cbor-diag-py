@@ -5,12 +5,12 @@ Changelog
 -----
 
 * Update build system dependencies (Maturin)
-* Publish wheels for ``pyemscripten_2026_`` (pyodide 314 / PEP 783)
+* Publish wheels for ``pyemscripten_2026_0`` (pyodide 314 / PEP 783)
 
 1.1.4
 -----
 
-* Add support for CBOR sequences using `seq=True` argument
+* Add support for CBOR sequences using ``seq=True`` argument
 * Update cbor-edn dependency (no changes in behavior)
 * Extend test coverage
 
@@ -45,7 +45,7 @@ Changelog
   This change also simplifies the output, because encoding indicators
   are now only emitted where necessary for round-tripping.
 
-* The conversion methods have arguments `from999` and `to999`, enabling
+* The conversion methods have arguments ``from999`` and ``to999``, enabling
   applications to do their own processing of application-oriented
   literals.
 
@@ -77,6 +77,6 @@ Changelog
 * Updates to Cargo.lock
 
   While this would usually not be a relevant change in a library crate,
-  this being a Python package to which ther Cargo.lock is input makes it
+  this being a Python package to which the Cargo.lock is input makes it
   relevant, especially as the updated cargo-diag crate pulls in a newer
   version of nom that does not use accidental features of rustc.
