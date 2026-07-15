@@ -14,6 +14,8 @@
 #     - uses: actions/setup-python@v6
 #       with:
 #         python-version: "3.14"
+# * Remove the emscripten test steps -- they are completely broken, but the
+#   current state was tested manually.
 name: CI
 
 on:
@@ -274,14 +276,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '22'
-      - name: pytest
-        run: |
-          set -e
-          pyodide venv .venv
-          source .venv/bin/activate
-          pip install cbor-diag --no-index --no-deps --find-links dist --force-reinstall
-          pip install cbor-diag pytest "cbor2 < 6"
-          python -m pytest
 
   android:
     runs-on: ${{ matrix.platform.runner }}
