@@ -3,6 +3,9 @@
 #
 #    maturin generate-ci github
 #
+# and
+#
+# * added `cbor2 < 6` to the pip install front of every pytest
 name: CI
 
 on:
@@ -63,7 +66,7 @@ jobs:
           uv venv .venv
           source .venv/bin/activate
           uv pip install cbor-diag --no-index --no-deps --find-links dist --reinstall
-          uv pip install cbor-diag pytest
+          uv pip install cbor-diag pytest "cbor2 < 6"
           pytest
       - name: pytest
         if: ${{ !startsWith(matrix.platform.target, 'x86') && matrix.platform.target != 'ppc64' }}
@@ -79,7 +82,7 @@ jobs:
             set -e
             python3 -m venv .venv
             source .venv/bin/activate
-            pip install pytest
+            pip install pytest "cbor2 < 6"
             pip install cbor-diag --no-index --no-deps --find-links dist --force-reinstall
             pip install cbor-diag
             pytest
@@ -123,7 +126,7 @@ jobs:
             python3 -m virtualenv .venv
             source .venv/bin/activate
             pip install cbor-diag --no-index --no-deps --find-links dist --force-reinstall
-            pip install cbor-diag pytest
+            pip install cbor-diag pytest "cbor2 < 6"
             pytest
           '
       - name: pytest
@@ -140,7 +143,7 @@ jobs:
             python3 -m virtualenv .venv
             source .venv/bin/activate
             pip install cbor-diag --no-index --no-deps --find-links dist --force-reinstall
-            pip install cbor-diag pytest
+            pip install cbor-diag pytest "cbor2 < 6"
             pytest
 
   windows:
@@ -182,7 +185,7 @@ jobs:
           uv venv .venv
           source .venv/Scripts/activate
           uv pip install cbor-diag --no-index --no-deps --find-links dist --reinstall
-          uv pip install cbor-diag pytest
+          uv pip install cbor-diag pytest "cbor2 < 6"
           pytest
 
   macos:
@@ -217,7 +220,7 @@ jobs:
           uv venv .venv
           source .venv/bin/activate
           uv pip install cbor-diag --no-index --no-deps --find-links dist --reinstall
-          uv pip install cbor-diag pytest
+          uv pip install cbor-diag pytest "cbor2 < 6"
           pytest
 
   emscripten:
@@ -266,7 +269,7 @@ jobs:
           pyodide venv .venv
           source .venv/bin/activate
           pip install cbor-diag --no-index --no-deps --find-links dist --force-reinstall
-          pip install cbor-diag pytest
+          pip install cbor-diag pytest "cbor2 < 6"
           python -m pytest
 
   android:
