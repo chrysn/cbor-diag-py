@@ -29,3 +29,14 @@ module-name = "cbor_diag._cbor_diag"
 
 [tool.codespell]
 ignore-words-list = ["EDN", "edn"]
+
+[tool.maturin.generate-ci.github]
+pytest = true
+# `all = {}` doesn't seem to work here
+manylinux = {}
+linux = {}
+musllinux = {}
+windows = {}
+macos = {}
+emscripten = {}
+android = {}
