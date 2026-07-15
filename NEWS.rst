@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.1.5
+-----
+
+* Update build system dependencies (Maturin)
+* Publish wheels for ``pyemscripten_2026_`` (pyodide 314 / PEP 783)
+
 1.1.4
 -----
 
