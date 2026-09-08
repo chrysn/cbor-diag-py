@@ -18,14 +18,14 @@ use pyo3_stub_gen::{define_stub_info_gatherer, derive::gen_stub_pyfunction};
 /// * With ``to999=True``, unknown application-oriented literals are kept in tag 999 for the
 ///   application to process further:
 ///
-/// >>> cbor2.loads(diag2cbor("[1, spam'eggs']", to999=True))
-/// [1, CBORTag(999, ['spam', 'eggs'])]
+///   >>> cbor2.loads(diag2cbor("[1, spam'eggs']", to999=True))
+///   [1, CBORTag(999, ['spam', 'eggs'])]
 ///
 /// * With ``seq=True``, `CBOR sequences`_
 ///   are tolerated:
 ///
-/// >>> diag2cbor("1, 2, 3", seq=True)
-/// '\x01\x02\x03'
+///   >>> diag2cbor("1, 2, 3", seq=True)
+///   '\x01\x02\x03'
 ///
 /// .. _`CBOR sequences`: https://datatracker.ietf.org/doc/html/rfc8742
 #[gen_stub_pyfunction]
@@ -68,25 +68,25 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool, seq: bool) -> PyResu
 /// * With ``pretty=False``, no space is left after colons, commas etc., and no
 ///   application-oriented literals are created:
 ///
-/// >>> cbor2diag(encoded, pretty=False)
-/// '1(5)'
-/// >>> cbor2diag(cbor2.dumps([1, 2]), pretty=False)
-/// '[1,2]'
-///
-/// This also affects how usually, ASCII is detected in byte strings:
-///
-/// >>> print(cbor2diag(cbor2.dumps(["foo", b"foo", b"f\xff\xff"])))
-/// ["foo", 'foo', h'66ffff']
-/// >>> print(cbor2diag(cbor2.dumps(["foo", b"foo", b"f\xff\xff"]), pretty=False))
-/// ["foo",h'666f6f',h'66ffff']
+///   >>> cbor2diag(encoded, pretty=False)
+///   '1(5)'
+///   >>> cbor2diag(cbor2.dumps([1, 2]), pretty=False)
+///   '[1,2]'
+///   
+///   This also affects how usually, ASCII is detected in byte strings:
+///   
+///   >>> print(cbor2diag(cbor2.dumps(["foo", b"foo", b"f\xff\xff"])))
+///   ["foo", 'foo', h'66ffff']
+///   >>> print(cbor2diag(cbor2.dumps(["foo", b"foo", b"f\xff\xff"]), pretty=False))
+///   ["foo",h'666f6f',h'66ffff']
 ///
 /// * With `seq=True`, `CBOR sequences`_ are tolerated:
 ///
-/// >>> print(cbor2diag('\x01\x02\x03', seq=True))
-/// 1,
-/// 2,
-/// 3
-/// <BLANKLINE>
+///   >>> print(cbor2diag('\x01\x02\x03', seq=True))
+///   1,
+///   2,
+///   3
+///   <BLANKLINE>
 ///
 /// .. _`CBOR sequences`: https://datatracker.ietf.org/doc/html/rfc8742
 ///
@@ -94,16 +94,16 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool, seq: bool) -> PyResu
 ///   other tags, this does not happen by default, as that tag is not intended to be used that way
 ///   by default.
 ///
-/// >>> cbor2diag(bytes.fromhex("d9 03e7 82 63 666f6f 63 626172"), from999=True)
-/// "foo'bar'"
+///   >>> cbor2diag(bytes.fromhex("d9 03e7 82 63 666f6f 63 626172"), from999=True)
+///   "foo'bar'"
 ///
 /// * With ``incomplete=True``, CBOR that terminates mid-data is accepted, and expressed with
 ///   ellipses. For example, this is useful to show a transfer in progress:
 ///
-/// >>> full = cbor2.dumps({"hello": "world"})
-/// >>> partial = full[:10]
-/// >>> print(cbor2diag(partial, incomplete=True))
-/// {"hello": "wo" + ...}
+///   >>> full = cbor2.dumps({"hello": "world"})
+///   >>> partial = full[:10]
+///   >>> print(cbor2diag(partial, incomplete=True))
+///   {"hello": "wo" + ...}
 #[gen_stub_pyfunction]
 #[pyfunction(signature = (encoded, *, pretty=true, from999=false, seq=false, incomplete=false))]
 fn cbor2diag(
