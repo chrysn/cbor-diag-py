@@ -106,8 +106,19 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool, seq: bool) -> PyResu
 ///   >>> partial = full[:10]
 ///   >>> print(cbor2diag(partial, incomplete=True))
 ///   {"hello": "wo" + ...}
+///
+/// * With ``unwrapped=`` and some tag number, the information from an implicit tag surrounding the
+///   item is processed:
+///
+///   >>> print(cbor2diag(cbor2.dumps({4:5}), unwrapped=601))
+///   {4/ exp /: dt'1970-01-01T00:00:05+00:00'}
+///
+///   Note that due to `upsteam issues <https://codeberg.org/chrysn/cbor-edn/issues/51>`_, the tags
+///   recognized through regular pretty-printing of tags are not necessarily recognized here, and
+///   vice versa. Currently, this works for tag 601 (CWT Claims Set), and for the explicit value
+///   ``"cose-header"`` (annotating COSE headers, which have no CBOR tag allocated).
 #[gen_stub_pyfunction]
-#[pyfunction(signature = (encoded, *, pretty=true, from999=false, seq=false, incomplete=false))]
+#[pyfunction(signature = (encoded, *, pretty=true, from999=false, seq=false, incomplete=false, unwrapped=None))]
 fn cbor2diag(
     _py: Python<'_>,
     // Staying generic for compatibility (we do still accept a [int]), but declare just bytes.
@@ -116,6 +127,7 @@ fn cbor2diag(
     from999: bool,
     seq: bool,
     incomplete: bool,
+    unwrapped: Option<Bound<'_, PyAny>>,
 ) -> PyResult<String> {
     let parsed = if incomplete {
         cbor_edn::Sequence::from_cbor_possibly_incomplete(encoded)
@@ -149,6 +161,17 @@ fn cbor2diag(
     }
     if from999 {
         transform = transform.from_999();
+    }
+    if let Some(unwrapped) = unwrapped {
+        if let Ok(unwrapped) = unwrapped.extract::<u64>() {
+            transform = transform.annotate_unwrapped_tag(unwrapped);
+        } else if let Ok("cose-header") = unwrapped.extract::<&str>() {
+            transform = transform.annotate_cose_header_map();
+        } else {
+            return Err(pyo3::exceptions::PyValueError::new_err(format!(
+                "Unrecognized value for unwrapped={unwrapped:?}: Use tag number or \"cose-header\""
+            )));
+        }
     }
 
     transform.apply_to(&mut parsed);
