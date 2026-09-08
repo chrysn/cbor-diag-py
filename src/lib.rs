@@ -89,8 +89,16 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool, seq: bool) -> PyResu
 ///
 /// >>> cbor2diag(bytes.fromhex("d9 03e7 82 63 666f6f 63 626172"), from999=True)
 /// "foo'bar'"
+///
+/// * With ``incomplete=True``, CBOR that terminates mid-data is accepted, and expressed with
+///   ellipses. For example, this is useful to show a transfer in progress:
+///
+/// >>> full = cbor2.dumps({"hello": "world"})
+/// >>> partial = full[:10]
+/// >>> print(cbor2diag(partial, incomplete=True))
+/// {"hello": "wo" + ...}
 #[gen_stub_pyfunction]
-#[pyfunction(signature = (encoded, *, pretty=true, from999=false, seq=false))]
+#[pyfunction(signature = (encoded, *, pretty=true, from999=false, seq=false, incomplete=false))]
 fn cbor2diag(
     _py: Python<'_>,
     // Staying generic for compatibility (we do still accept a [int]), but declare just bytes.
@@ -98,9 +106,27 @@ fn cbor2diag(
     pretty: bool,
     from999: bool,
     seq: bool,
+    incomplete: bool,
 ) -> PyResult<String> {
-    let mut parsed = cbor_edn::Sequence::from_cbor(encoded)
-        .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
+    let parsed = if incomplete {
+        cbor_edn::Sequence::from_cbor_possibly_incomplete(encoded)
+    } else {
+        cbor_edn::Sequence::from_cbor(encoded)
+    };
+    let mut parsed =
+        parsed.map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
+
+    // Treating everything as a sequence and just later checking if it's just one item has the
+    // downside that we can't rely on _possibly_incomplete to use our prior knowledge; feeding that
+    // knowledge back in by trimming off the trailing ellipsis.
+    if incomplete
+        && parsed
+            .items()
+            .nth(1)
+            .is_some_and(|i| i.serialize() == "...")
+    {
+        parsed = cbor_edn::Sequence::new(parsed.items().take(1).cloned());
+    }
 
     check_sequence_expectation(&parsed, seq)?;
 

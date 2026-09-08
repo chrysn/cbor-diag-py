@@ -32,3 +32,7 @@ b'\x01\x02\x03'
 <BLANKLINE>
 >>> cbor2diag(bytes.fromhex("d9 03e7 82 63 666f6f 63 626172"), from999=True)
 "foo'bar'"
+>>> full = cbor2.dumps({"hello": "world"})
+>>> partial = full[:10]
+>>> print(cbor2diag(partial, incomplete=True))
+{"hello": "wo" + ...}
