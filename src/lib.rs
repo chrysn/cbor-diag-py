@@ -73,6 +73,13 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool, seq: bool) -> PyResu
 /// >>> cbor2diag(cbor2.dumps([1, 2]), pretty=False)
 /// '[1,2]'
 ///
+/// This also affects how usually, ASCII is detected in byte strings:
+///
+/// >>> print(cbor2diag(cbor2.dumps(["foo", b"foo", b"f\xff\xff"])))
+/// ["foo", 'foo', h'66ffff']
+/// >>> print(cbor2diag(cbor2.dumps(["foo", b"foo", b"f\xff\xff"]), pretty=False))
+/// ["foo",h'666f6f',h'66ffff']
+///
 /// * With `seq=True`, `CBOR sequences`_ are tolerated:
 ///
 /// >>> print(cbor2diag('\x01\x02\x03', seq=True))
