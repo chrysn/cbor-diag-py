@@ -25,6 +25,11 @@ b'\x01\x02\x03'
 '1(5)'
 >>> cbor2diag(cbor2.dumps([1, 2]), pretty=False)
 '[1,2]'
+>>> some_byte_ascii = cbor2.dumps(["foo", b"foo", b"f\xff\xff"])
+>>> print(cbor2diag(some_byte_ascii))
+["foo", 'foo', h'66ffff']
+>>> print(cbor2diag(some_byte_ascii, pretty=False))
+["foo",h'666f6f',h'66ffff']
 >>> print(cbor2diag(b'\x01\x02\x03', seq=True))
 1,
 2,
@@ -32,3 +37,9 @@ b'\x01\x02\x03'
 <BLANKLINE>
 >>> cbor2diag(bytes.fromhex("d9 03e7 82 63 666f6f 63 626172"), from999=True)
 "foo'bar'"
+>>> full = cbor2.dumps({"hello": "world"})
+>>> partial = full[:10]
+>>> print(cbor2diag(partial, incomplete=True))
+{"hello": "wo" + ...}
+>>> print(cbor2diag(cbor2.dumps({4:5}), unwrapped=601))
+{4/ exp /: dt'1970-01-01T00:00:05+00:00'}

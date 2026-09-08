@@ -18,14 +18,14 @@ use pyo3_stub_gen::{define_stub_info_gatherer, derive::gen_stub_pyfunction};
 /// * With ``to999=True``, unknown application-oriented literals are kept in tag 999 for the
 ///   application to process further:
 ///
-/// >>> cbor2.loads(diag2cbor("[1, spam'eggs']", to999=True))
-/// [1, CBORTag(999, ['spam', 'eggs'])]
+///   >>> cbor2.loads(diag2cbor("[1, spam'eggs']", to999=True))
+///   [1, CBORTag(999, ['spam', 'eggs'])]
 ///
 /// * With ``seq=True``, `CBOR sequences`_
 ///   are tolerated:
 ///
-/// >>> diag2cbor("1, 2, 3", seq=True)
-/// '\x01\x02\x03'
+///   >>> diag2cbor("1, 2, 3", seq=True)
+///   '\x01\x02\x03'
 ///
 /// .. _`CBOR sequences`: https://datatracker.ietf.org/doc/html/rfc8742
 #[gen_stub_pyfunction]
@@ -36,10 +36,13 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool, seq: bool) -> PyResu
 
     check_sequence_expectation(&data, seq)?;
 
-    data.visit_application_literals(&mut cbor_edn::application::all_aol_to_item);
+    let mut transform = cbor_edn::Transformation::new().for_cbor_serialization();
+
     if to999 {
-        data.visit_application_literals(&mut cbor_edn::application::any_aol_to_tag999);
+        transform = transform.to_999();
     }
+
+    transform.apply_to(&mut data);
 
     let bytes = data
         .to_cbor()
@@ -65,18 +68,27 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool, seq: bool) -> PyResu
 /// * With ``pretty=False``, no space is left after colons, commas etc., and no
 ///   application-oriented literals are created:
 ///
-/// >>> cbor2diag(encoded, pretty=False)
-/// '1(5)'
-/// >>> cbor2diag(cbor2.dumps([1, 2]), pretty=False)
-/// '[1,2]'
+///   >>> cbor2diag(encoded, pretty=False)
+///   '1(5)'
+///   >>> cbor2diag(cbor2.dumps([1, 2]), pretty=False)
+///   '[1,2]'
+///   
+///   This also disables the usual heuristics for enhanced human readability of byte strings that
+///   contain Unicode:
+///   
+///   >>> some_byte_ascii = cbor2.dumps(["foo", b"foo", b"f\xff\xff"])
+///   >>> print(cbor2diag(some_byte_ascii))
+///   ["foo", 'foo', h'66ffff']
+///   >>> print(cbor2diag(some_byte_ascii, pretty=False))
+///   ["foo",h'666f6f',h'66ffff']
 ///
 /// * With `seq=True`, `CBOR sequences`_ are tolerated:
 ///
-/// >>> print(cbor2diag('\x01\x02\x03', seq=True))
-/// 1,
-/// 2,
-/// 3
-/// <BLANKLINE>
+///   >>> print(cbor2diag('\x01\x02\x03', seq=True))
+///   1,
+///   2,
+///   3
+///   <BLANKLINE>
 ///
 /// .. _`CBOR sequences`: https://datatracker.ietf.org/doc/html/rfc8742
 ///
@@ -84,10 +96,29 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool, seq: bool) -> PyResu
 ///   other tags, this does not happen by default, as that tag is not intended to be used that way
 ///   by default.
 ///
-/// >>> cbor2diag(bytes.fromhex("d9 03e7 82 63 666f6f 63 626172"), from999=True)
-/// "foo'bar'"
+///   >>> cbor2diag(bytes.fromhex("d9 03e7 82 63 666f6f 63 626172"), from999=True)
+///   "foo'bar'"
+///
+/// * With ``incomplete=True``, CBOR that terminates mid-data is accepted, and expressed with
+///   ellipses. For example, this is useful to show a transfer in progress:
+///
+///   >>> full = cbor2.dumps({"hello": "world"})
+///   >>> partial = full[:10]
+///   >>> print(cbor2diag(partial, incomplete=True))
+///   {"hello": "wo" + ...}
+///
+/// * With ``unwrapped=`` and some tag number, the information from an implicit tag surrounding the
+///   item is processed:
+///
+///   >>> print(cbor2diag(cbor2.dumps({4:5}), unwrapped=601))
+///   {4/ exp /: dt'1970-01-01T00:00:05+00:00'}
+///
+///   Note that due to `upsteam issues <https://codeberg.org/chrysn/cbor-edn/issues/51>`_, the tags
+///   recognized through regular pretty-printing of tags are not necessarily recognized here, and
+///   vice versa. Currently, this works for tag 601 (CWT Claims Set), and for the explicit value
+///   ``"cose-header"`` (annotating COSE headers, which have no CBOR tag allocated).
 #[gen_stub_pyfunction]
-#[pyfunction(signature = (encoded, *, pretty=true, from999=false, seq=false))]
+#[pyfunction(signature = (encoded, *, pretty=true, from999=false, seq=false, incomplete=false, unwrapped=None))]
 fn cbor2diag(
     _py: Python<'_>,
     // Staying generic for compatibility (we do still accept a [int]), but declare just bytes.
@@ -95,43 +126,56 @@ fn cbor2diag(
     pretty: bool,
     from999: bool,
     seq: bool,
+    incomplete: bool,
+    unwrapped: Option<Bound<'_, PyAny>>,
 ) -> PyResult<String> {
-    let mut parsed = cbor_edn::Sequence::from_cbor(encoded)
-        .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
+    let parsed = if incomplete {
+        cbor_edn::Sequence::from_cbor_possibly_incomplete(encoded)
+    } else {
+        cbor_edn::Sequence::from_cbor(encoded)
+    };
+    let mut parsed =
+        parsed.map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("{}", e)))?;
+
+    // Treating everything as a sequence and just later checking if it's just one item has the
+    // downside that we can't rely on _possibly_incomplete to use our prior knowledge; feeding that
+    // knowledge back in by trimming off the trailing ellipsis.
+    if incomplete
+        && parsed
+            .items()
+            .nth(1)
+            .is_some_and(|i| i.serialize() == "...")
+    {
+        parsed = cbor_edn::Sequence::new(parsed.items().take(1).cloned());
+    }
 
     check_sequence_expectation(&parsed, seq)?;
 
+    let mut transform = cbor_edn::Transformation::new();
+
     if pretty {
-        parsed.visit_tag(&mut cbor_edn::application::all_tag_prettify);
+        transform = transform.pretty();
+    } else {
+        // Well that's a choice, we could also leave the defaults
+        transform = transform.minify();
     }
     if from999 {
-        parsed.visit_tag(&mut |tag, item: &mut cbor_edn::Item| {
-            if tag != 999 {
-                return Ok(());
-            }
-            let tagged = item.get_tagged().expect("Visitor promises this is true");
-            let Ok(mut items) = tagged.item().get_array_items() else {
-                return Err("should be array".into());
-            };
-            let (Some(ident), Some(value), None) = (items.next(), items.next(), items.next())
-            else {
-                return Err("should contain 2 items".into());
-            };
-            drop(items);
-            let ident = ident.get_string().map_err(|_| "ident should be string")?;
-            let value = value.get_string().map_err(|_| "value should be string")?;
-            let new_item = cbor_edn::Item::new_application_literal(&ident, &value)
-                // I don't see how value could ever trigger anything here
-                .map_err(|_| "ident string is unsuitable for application-oriented literal")?;
-            *item = new_item;
-            Ok(())
-        });
+        transform = transform.from_999();
     }
-    if pretty {
-        parsed.set_delimiters(cbor_edn::DelimiterPolicy::indented());
-    } else {
-        parsed.set_delimiters(cbor_edn::DelimiterPolicy::DiscardAll);
+    if let Some(unwrapped) = unwrapped {
+        if let Ok(unwrapped) = unwrapped.extract::<u64>() {
+            transform = transform.annotate_unwrapped_tag(unwrapped);
+        } else if let Ok("cose-header") = unwrapped.extract::<&str>() {
+            transform = transform.annotate_cose_header_map();
+        } else {
+            return Err(pyo3::exceptions::PyValueError::new_err(format!(
+                "Unrecognized value for unwrapped={unwrapped:?}: Use tag number or \"cose-header\""
+            )));
+        }
     }
+
+    transform.apply_to(&mut parsed);
+
     Ok(parsed.serialize())
 }
 

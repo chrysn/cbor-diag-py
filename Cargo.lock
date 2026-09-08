@@ -40,9 +40,9 @@ dependencies = [
 
 [[package]]
 name = "cbor-edn"
-version = "0.0.10"
+version = "0.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0f2b8fe1e37bb2b474537cf0330acddfd5f6f83d1ce062c5df65ebe3642b0607"
+checksum = "8ec2c6e2c000f4c269d03806b3ebd7b64cd1569cf99c49a4c8ad6820498fb736"
 dependencies = [
  "chrono",
  "data-encoding",
