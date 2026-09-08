@@ -25,9 +25,10 @@ b'\x01\x02\x03'
 '1(5)'
 >>> cbor2diag(cbor2.dumps([1, 2]), pretty=False)
 '[1,2]'
->>> print(cbor2diag(cbor2.dumps(["foo", b'foo', b'f\xff\xff'])))
+>>> some_byte_ascii = cbor2.dumps(["foo", b"foo", b"f\xff\xff"])
+>>> print(cbor2diag(some_byte_ascii))
 ["foo", 'foo', h'66ffff']
->>> print(cbor2diag(cbor2.dumps(["foo", b'foo', b'f\xff\xff']), pretty=False))
+>>> print(cbor2diag(some_byte_ascii, pretty=False))
 ["foo",h'666f6f',h'66ffff']
 >>> print(cbor2diag(b'\x01\x02\x03', seq=True))
 1,
