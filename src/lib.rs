@@ -36,10 +36,13 @@ fn diag2cbor(py: Python<'_>, diagnostic: &str, to999: bool, seq: bool) -> PyResu
 
     check_sequence_expectation(&data, seq)?;
 
-    data.visit_application_literals(&mut cbor_edn::application::all_aol_to_item);
+    let mut transform = cbor_edn::Transformation::new().for_cbor_serialization();
+
     if to999 {
-        data.visit_application_literals(&mut cbor_edn::application::any_aol_to_tag999);
+        transform = transform.to_999();
     }
+
+    transform.apply_to(&mut data);
 
     let bytes = data
         .to_cbor()
@@ -101,37 +104,20 @@ fn cbor2diag(
 
     check_sequence_expectation(&parsed, seq)?;
 
+    let mut transform = cbor_edn::Transformation::new();
+
     if pretty {
-        parsed.visit_tag(&mut cbor_edn::application::all_tag_prettify);
+        transform = transform.pretty();
+    } else {
+        // Well that's a choice, we could also leave the defaults
+        transform = transform.minify();
     }
     if from999 {
-        parsed.visit_tag(&mut |tag, item: &mut cbor_edn::Item| {
-            if tag != 999 {
-                return Ok(());
-            }
-            let tagged = item.get_tagged().expect("Visitor promises this is true");
-            let Ok(mut items) = tagged.item().get_array_items() else {
-                return Err("should be array".into());
-            };
-            let (Some(ident), Some(value), None) = (items.next(), items.next(), items.next())
-            else {
-                return Err("should contain 2 items".into());
-            };
-            drop(items);
-            let ident = ident.get_string().map_err(|_| "ident should be string")?;
-            let value = value.get_string().map_err(|_| "value should be string")?;
-            let new_item = cbor_edn::Item::new_application_literal(&ident, &value)
-                // I don't see how value could ever trigger anything here
-                .map_err(|_| "ident string is unsuitable for application-oriented literal")?;
-            *item = new_item;
-            Ok(())
-        });
+        transform = transform.from_999();
     }
-    if pretty {
-        parsed.set_delimiters(cbor_edn::DelimiterPolicy::indented());
-    } else {
-        parsed.set_delimiters(cbor_edn::DelimiterPolicy::DiscardAll);
-    }
+
+    transform.apply_to(&mut parsed);
+
     Ok(parsed.serialize())
 }
 
