@@ -2,12 +2,13 @@
 # ruff: noqa: E501, F401, F403, F405
 
 import builtins
+import typing
 __all__ = [
     "cbor2diag",
     "diag2cbor",
 ]
 
-def cbor2diag(encoded: bytes, *, pretty: builtins.bool = ..., from999: builtins.bool = ..., seq: builtins.bool = ...) -> builtins.str:
+def cbor2diag(encoded: bytes, *, pretty: builtins.bool = ..., from999: builtins.bool = ..., seq: builtins.bool = ..., incomplete: builtins.bool = ..., unwrapped: typing.Optional[typing.Any] = None) -> builtins.str:
     r"""
     Given a byte string containing encoded CBOR, produce some diagnostic notation.
     
@@ -27,18 +28,27 @@ def cbor2diag(encoded: bytes, *, pretty: builtins.bool = ..., from999: builtins.
     * With ``pretty=False``, no space is left after colons, commas etc., and no
       application-oriented literals are created:
     
-    >>> cbor2diag(encoded, pretty=False)
-    '1(5)'
-    >>> cbor2diag(cbor2.dumps([1, 2]), pretty=False)
-    '[1,2]'
+      >>> cbor2diag(encoded, pretty=False)
+      '1(5)'
+      >>> cbor2diag(cbor2.dumps([1, 2]), pretty=False)
+      '[1,2]'
+    
+      This also disables the usual heuristics for enhanced human readability of byte strings that
+      contain Unicode:
+    
+      >>> some_byte_ascii = cbor2.dumps(["foo", b"foo", b"f\xff\xff"])
+      >>> print(cbor2diag(some_byte_ascii))
+      ["foo", 'foo', h'66ffff']
+      >>> print(cbor2diag(some_byte_ascii, pretty=False))
+      ["foo",h'666f6f',h'66ffff']
     
     * With `seq=True`, `CBOR sequences`_ are tolerated:
     
-    >>> print(cbor2diag('\x01\x02\x03', seq=True))
-    1,
-    2,
-    3
-    <BLANKLINE>
+      >>> print(cbor2diag('\x01\x02\x03', seq=True))
+      1,
+      2,
+      3
+      <BLANKLINE>
     
     .. _`CBOR sequences`: https://datatracker.ietf.org/doc/html/rfc8742
     
@@ -46,8 +56,27 @@ def cbor2diag(encoded: bytes, *, pretty: builtins.bool = ..., from999: builtins.
       other tags, this does not happen by default, as that tag is not intended to be used that way
       by default.
     
-    >>> cbor2diag(bytes.fromhex("d9 03e7 82 63 666f6f 63 626172"), from999=True)
-    "foo'bar'"
+      >>> cbor2diag(bytes.fromhex("d9 03e7 82 63 666f6f 63 626172"), from999=True)
+      "foo'bar'"
+    
+    * With ``incomplete=True``, CBOR that terminates mid-data is accepted, and expressed with
+      ellipses. For example, this is useful to show a transfer in progress:
+    
+      >>> full = cbor2.dumps({"hello": "world"})
+      >>> partial = full[:10]
+      >>> print(cbor2diag(partial, incomplete=True))
+      {"hello": "wo" + ...}
+    
+    * With ``unwrapped=`` and some tag number, the information from an implicit tag surrounding the
+      item is processed:
+    
+      >>> print(cbor2diag(cbor2.dumps({4:5}), unwrapped=601))
+      {4/ exp /: dt'1970-01-01T00:00:05+00:00'}
+    
+      Note that due to `upsteam issues <https://codeberg.org/chrysn/cbor-edn/issues/51>`_, the tags
+      recognized through regular pretty-printing of tags are not necessarily recognized here, and
+      vice versa. Currently, this works for tag 601 (CWT Claims Set), and for the explicit value
+      ``"cose-header"`` (annotating COSE headers, which have no CBOR tag allocated).
     """
 
 def diag2cbor(diagnostic: builtins.str, *, to999: builtins.bool = ..., seq: builtins.bool = ...) -> bytes:
@@ -68,14 +97,14 @@ def diag2cbor(diagnostic: builtins.str, *, to999: builtins.bool = ..., seq: buil
     * With ``to999=True``, unknown application-oriented literals are kept in tag 999 for the
       application to process further:
     
-    >>> cbor2.loads(diag2cbor("[1, spam'eggs']", to999=True))
-    [1, CBORTag(999, ['spam', 'eggs'])]
+      >>> cbor2.loads(diag2cbor("[1, spam'eggs']", to999=True))
+      [1, CBORTag(999, ['spam', 'eggs'])]
     
     * With ``seq=True``, `CBOR sequences`_
       are tolerated:
     
-    >>> diag2cbor("1, 2, 3", seq=True)
-    '\x01\x02\x03'
+      >>> diag2cbor("1, 2, 3", seq=True)
+      '\x01\x02\x03'
     
     .. _`CBOR sequences`: https://datatracker.ietf.org/doc/html/rfc8742
     """
