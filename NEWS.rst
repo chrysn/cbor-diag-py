@@ -1,6 +1,16 @@
 Changelog
 =========
 
+1.2.0
+-----
+
+* Update to ``cbor-edn`` 0.0.11:
+  - ``cbor2diag`` now produces Unicode byte strings where suitable
+* New ``cbor2diag`` options for new ``cbor-edn`` features:
+  - ``incomplete=True``
+  - ``unwrapped=int|str``
+* Update build system dependencies (Maturin, pyo3)
+
 1.1.5
 -----
 
